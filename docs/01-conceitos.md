@@ -26,6 +26,15 @@ A base conceitual antes de qualquer discussão de risco ou mitigação: o que co
 === "Factualidade"
     Geração confiante de fatos falsos sobre o mundo, por erro de memória paramétrica.
 
+```mermaid
+flowchart TD
+    R["Resposta do LLM"] --> Q{"Existe material\nde referência?"}
+    Q -- não --> F["Factualidade\nfato falso do mundo,\nerro de memória paramétrica"]
+    Q -- sim --> C{"A resposta contradiz\no material?"}
+    C -- sim --> I["Intrínseca\ncontradiz a referência"]
+    C -- não, mas adiciona\nalegações não verificáveis --> E["Extrínseca\nalegação ausente nos dados"]
+```
+
 ## Por que os LLMs alucinam
 
 Duas linhas de argumento, independentes entre si, tratam a alucinação como algo além de um defeito de engenharia corrigível por mais dados ou mais parâmetros.
@@ -38,6 +47,26 @@ Duas linhas de argumento, independentes entre si, tratam a alucinação como alg
 
 !!! warning "Duas teses distintas, não uma só"
     O argumento de Kalai et al. é sobre incentivo de treino e avaliação; o de Xu et al. é sobre limite de computabilidade. Não são versões da mesma ideia: um aponta para a correção de benchmarks como mitigação viável, o outro implica que nenhuma correção de benchmark elimina o problema por completo.
+
+```mermaid
+flowchart LR
+    subgraph S1["Kalai, Nachum, Vempala & Zhang, 2025"]
+        direction TB
+        A1["Fatos raros no\npré-treinamento"] --> A2["Viram erros de\nclassificação ordinários"]
+        A2 --> A3["Benchmarks premiam\nresposta confiante,\npenalizam 'não sei'"]
+        A3 --> A4["Modelo aprende\na adivinhar"]
+    end
+
+    subgraph S2["Xu, Jain & Kankanhalli, 2024"]
+        direction TB
+        B1["LLM = função\ncomputável"] --> B2["Verdade-terreno =\nfunção computável"]
+        B2 --> B3["Teoria da aprendizagem:\nnenhum solucionador geral\naprende toda função computável"]
+        B3 --> B4["Inconsistência residual\npor diagonalização"]
+    end
+
+    A4 -.->|"mitigação: corrigir\na pontuação dos\nbenchmarks"| M["Alucinação\nreduzida, não eliminada"]
+    B4 -.->|"sem mitigação possível:\nlimite formal"| M
+```
 
 ## Calibração e incerteza epistêmica
 
@@ -67,6 +96,20 @@ O vocabulário de "calibração" e "entropia semântica", usado nos capítulos [
 | Sem calibração | Com calibração |
 |---|---|
 | Um modelo responde 100 consultas táticas com 98 acertos. Nas 2 erradas, emite parecer com 100% de certeza — alta acurácia, calibração nula, risco silencioso. | Em um pipeline de C2, o modelo recusa responder quando sua confiança cai abaixo de um limiar, convertendo alucinações silenciosas em falhas visíveis e auditáveis. |
+
+```mermaid
+flowchart LR
+    Q["Consulta tática"] --> M["LLM gera resposta\n+ estimativa de confiança"]
+    M --> D{"Confiança acima\ndo limiar?"}
+    D -- sim --> P["Parecer emitido"]
+    D -- não --> X["Resposta recusada,\nsinalizada para revisão humana"]
+
+    P -.->|"sem calibração:\nlimiar inexistente,\nresposta sempre emitida"| Silent["Erro silencioso\n(2/100, confiança 100%)"]
+    X -.->|"com calibração:\nlimiar ativo"| Audit["Falha visível\ne auditável"]
+
+    style Silent stroke:#c62828,stroke-width:2px
+    style Audit stroke:#2e7d32,stroke-width:2px
+```
 
 !!! tip "Conclusão"
     Um LLM militar com 99% de acurácia que nunca sinaliza incerteza é um passivo tático. Calibração, quantificar a própria ignorância, é a chave da confiabilidade operacional.
