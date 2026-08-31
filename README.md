@@ -1,6 +1,6 @@
 # Alucinação em LLMs — Manual de Referência
 
-Documento vivo sobre alucinação em modelos de linguagem e confiabilidade em contextos de defesa, mantido como base de conhecimento em evolução ao longo do pós-doutorado no IME.
+Documento vivo sobre alucinação em modelos de linguagem e confiabilidade em contextos de defesa, mantido como base de conhecimento em evolução ao longo de um programa de pós-doutorado.
 
 **Site:** https://pierredantas.github.io/alucinacao-llm-manual/
 

@@ -7,8 +7,8 @@ O que este panorama da literatura sustenta, e por onde continuar lendo.
 !!! danger "O paradoxo da Defesa"
     Grandes potências estão armando sistemas mais rápido do que conseguem verificar.
 
-!!! tip "Direcionamento estratégico do IME"
-    O nicho de alto impacto do Brasil e do IME está em Verificação e Validação, monitoramento formal em tempo de execução e frameworks de certificação de confiabilidade para sistemas decisórios militares.
+!!! tip "Direcionamento estratégico"
+    O nicho de alto impacto do Brasil está em Verificação e Validação, monitoramento formal em tempo de execução e frameworks de certificação de confiabilidade para sistemas decisórios militares.
 
 ## Roteiro de leituras recomendadas
 

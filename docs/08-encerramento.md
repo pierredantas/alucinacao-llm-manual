@@ -2,7 +2,7 @@
 
 > Integrando a engenharia clássica de confiabilidade de sistemas com a verificação formal de IA generativa para a Defesa Nacional.
 
-Grupo de Pesquisa em Confiabilidade — IME Brasil
+Grupo de Pesquisa em Confiabilidade
 V&V para IA Militar
 
 ---
