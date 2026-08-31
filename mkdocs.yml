@@ -12,7 +12,6 @@ edit_uri: ""
 nav:
   - Início: index.md
   - "01 · Conceitos fundamentais": 01-conceitos.md
-  - Glossário: glossario.md
   - "02 · Linha do tempo da literatura": 02-linha-do-tempo.md
   - "03 · Detecção & mitigação": 03-deteccao-mitigacao.md
   - "04 · Benchmarks & métricas": 04-benchmarks.md
@@ -20,6 +19,7 @@ nav:
   - "06 · Agenda de pesquisa": 06-agenda-pesquisa.md
   - "07 · Conclusões": 07-conclusoes.md
   - "08 · Perguntas & discussão": 08-encerramento.md
+  - Glossário: glossario.md
   - Metodologia: methodology.md
   - Licença: license.md
 
