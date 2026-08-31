@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this resource, please cite it as below."
+title: "Alucinação em LLMs & Confiabilidade na Defesa: Manual de Referência"
+type: dataset
+authors:
+  - family-names: Dantas
+    given-names: Pierre
+    email: pierre.dantas@gmail.com
+    affiliation: "Instituto Militar de Engenharia (IME)"
+repository-code: "https://github.com/pierredantas/alucinacao-llm-manual"
+url: "https://pierredantas.github.io/alucinacao-llm-manual/"
+license: CC-BY-4.0
+version: 0.1.0
+date-released: 2026-08-31
+keywords:
+  - hallucination
+  - large language models
+  - AI reliability
+  - AI verification and validation
+  - defense AI
+abstract: >
+  Living reference manual and curated bibliography on hallucination in large
+  language models, framed around reliability engineering and verification
+  and validation for defense-related AI systems. Maintained by the Grupo de
+  Confiabilidade at the Instituto Militar de Engenharia (IME), Brazil.
