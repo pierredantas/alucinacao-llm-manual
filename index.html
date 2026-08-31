@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alucinação em LLMs & Confiabilidade na Defesa — Manual de Referência</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#ffffff;
+  --bg-alt:#f4f6f8;
+  --surface:#fbfbfc;
+  --surface-2:#eef1f4;
+  --border:#dde2e7;
+  --text:#1b232b;
+  --text-dim:#55626d;
+  --text-faint:#8a95a0;
+  --accent:#b5720f;
+  --accent-soft:rgba(181,114,15,.09);
+  --risk:#b34a34;
+  --risk-soft:rgba(179,74,52,.07);
+  --good:#31815d;
+  --good-soft:rgba(49,129,93,.08);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:16px;
+  line-height:1.55;
+}
+
+::selection{background:var(--accent-soft);color:var(--accent);}
+
+h1,h2,h3,.display{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin:0;
+}
+
+.mono{font-family:'IBM Plex Mono',monospace;}
+
+/* ---------- layout shell ---------- */
+.app{
+  display:grid;
+  grid-template-columns:270px 1fr;
+  min-height:100vh;
+}
+
+/* ---------- sidebar ---------- */
+.sidebar{
+  background:var(--bg-alt);
+  border-right:1px solid var(--border);
+  padding:28px 22px;
+  display:flex;
+  flex-direction:column;
+  position:sticky;
+  top:0;
+  height:100vh;
+}
+
+.brand{
+  margin-bottom:28px;
+}
+.brand .mark{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  letter-spacing:.04em;
+}
+.brand h1{
+  font-size:17px;
+  line-height:1.3;
+  margin-top:8px;
+  color:var(--text);
+}
+.brand p{
+  font-size:12.5px;
+  color:var(--text-faint);
+  margin:8px 0 0;
+}
+
+nav.chapters{
+  flex:1;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  margin:0 -10px;
+  padding:0 10px;
+}
+.chapter-btn{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  width:100%;
+  text-align:left;
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  font-family:'Inter',sans-serif;
+  font-size:13.5px;
+  padding:9px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+.chapter-btn .num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--text-faint);
+  min-width:18px;
+}
+.chapter-btn:hover{background:var(--surface);color:var(--text);}
+.chapter-btn.active{background:var(--accent-soft);color:var(--accent);}
+.chapter-btn.active .num{color:var(--accent);}
+
+.sidebar-footer{
+  border-top:1px solid var(--border);
+  padding-top:14px;
+  margin-top:14px;
+  font-size:11.5px;
+  color:var(--text-faint);
+  line-height:1.5;
+}
+
+/* mobile top bar */
+.mobile-bar{display:none;}
+
+/* ---------- main ---------- */
+main{
+  padding:56px 48px 90px;
+  max-width:800px;
+}
+
+.kicker{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+.chapter-title{
+  font-size:32px;
+  margin-bottom:6px;
+}
+.chapter-sub{
+  color:var(--text-dim);
+  font-size:15px;
+  max-width:60ch;
+  margin-top:10px;
+}
+
+.chapter{display:none;}
+.chapter.active{display:block; animation:fade .25s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+.block{margin-top:38px;}
+.block h3{
+  font-size:14px;
+  color:var(--text-dim);
+  font-weight:500;
+  margin-bottom:14px;
+}
+
+/* definition card */
+.def{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:18px 20px;
+  margin-bottom:12px;
+}
+.def .label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--accent);
+  margin-bottom:8px;
+}
+
+a.ref{
+  color:inherit;
+  text-decoration:underline;
+  text-decoration-color:var(--border);
+  text-underline-offset:2px;
+}
+a.ref:hover{text-decoration-color:var(--accent);}
+td a.ref, .tl-body a.ref{
+  text-decoration-color:var(--text-faint);
+}
+.def p{margin:0; font-size:14.5px; color:var(--text);}
+.def p + p{margin-top:8px; color:var(--text-dim); font-size:13.5px;}
+
+.def-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media (max-width:640px){.def-grid{grid-template-columns:1fr;}}
+
+.def.risk{border-color:rgba(217,113,76,.35);}
+.def.risk .label{color:var(--risk);}
+.def.good{border-color:rgba(111,174,140,.35);}
+.def.good .label{color:var(--good);}
+
+/* callout */
+.callout{
+  border-left:2px solid var(--accent);
+  padding:4px 0 4px 18px;
+  margin-top:24px;
+  font-size:14.5px;
+  color:var(--text);
+}
+.callout.risk{border-color:var(--risk);}
+.callout .tag{
+  display:block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--text-faint);
+  margin-bottom:4px;
+}
+
+/* quote */
+blockquote{
+  margin:0;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:19px;
+  font-weight:500;
+  line-height:1.45;
+  color:var(--text);
+  padding:2px 0;
+}
+
+/* table */
+.tbl{width:100%; border-collapse:collapse; font-size:13.5px;}
+.tbl th{
+  text-align:left;
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:500;
+  font-size:11px;
+  color:var(--text-faint);
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+}
+.tbl td{
+  padding:11px 12px;
+  border-bottom:1px solid var(--border);
+  color:var(--text-dim);
+  vertical-align:top;
+}
+.tbl td:first-child{color:var(--text); font-weight:500;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl .num-cell{font-family:'IBM Plex Mono',monospace; color:var(--text);}
+.tbl-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:10px;}
+.tbl-wrap .tbl{min-width:520px;}
+.tbl-wrap th:first-child, .tbl-wrap td:first-child{padding-left:16px;}
+
+/* timeline */
+.timeline{display:flex; flex-direction:column; gap:0;}
+.tl-item{
+  display:grid;
+  grid-template-columns:64px 1fr;
+  gap:16px;
+  padding:16px 0;
+  border-top:1px solid var(--border);
+}
+.tl-item:first-child{border-top:none;}
+.tl-year{font-family:'IBM Plex Mono',monospace; font-size:14px; color:var(--accent); padding-top:2px;}
+.tl-body strong{display:block; font-size:14.5px; color:var(--text); margin-bottom:4px; font-weight:500;}
+.tl-body span{font-size:13.5px; color:var(--text-dim);}
+
+/* research question grid */
+.qgrid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media (max-width:640px){.qgrid{grid-template-columns:1fr;}}
+.qcard{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:16px 18px;
+}
+.qcard .qtag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  display:block;
+  margin-bottom:6px;
+}
+.qcard strong{display:block; font-size:14px; margin-bottom:6px; font-weight:500;}
+.qcard p{margin:0; font-size:13px; color:var(--text-dim);}
+
+/* two-col pursue/avoid */
+.split{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px;}
+@media (max-width:640px){.split{grid-template-columns:1fr;}}
+.split-col h4{
+  font-size:12.5px;
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:500;
+  margin-bottom:12px;
+}
+.split-col.pursue h4{color:var(--good);}
+.split-col.avoid h4{color:var(--risk);}
+.item-line{
+  display:flex; gap:10px;
+  font-size:13.5px;
+  color:var(--text-dim);
+  padding:9px 0;
+  border-top:1px solid var(--border);
+}
+.item-line:first-of-type{border-top:none;}
+.item-line strong{color:var(--text); font-weight:500;}
+.dot{width:5px; height:5px; border-radius:50%; margin-top:7px; flex:none;}
+.split-col.pursue .dot{background:var(--good);}
+.split-col.avoid .dot{background:var(--risk);}
+
+/* stat row */
+.stat-row{display:flex; gap:28px; flex-wrap:wrap; margin-top:22px;}
+.stat{min-width:140px;}
+.stat .n{font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:600; color:var(--accent);}
+.stat .l{font-size:12.5px; color:var(--text-faint); margin-top:4px;}
+
+/* cover */
+.cover{
+  min-height:calc(100vh - 146px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.cover .mono{color:var(--accent); font-size:13px;}
+.cover h1{font-size:40px; line-height:1.15; margin-top:16px; max-width:16ch;}
+.cover .sub{color:var(--text-dim); font-size:15.5px; max-width:52ch; margin-top:18px;}
+.cover .meta{
+  display:flex; gap:22px; flex-wrap:wrap;
+  margin-top:36px; padding-top:20px; border-top:1px solid var(--border);
+  font-size:12.5px; color:var(--text-faint);
+}
+.cover .meta b{color:var(--text-dim); font-weight:500;}
+
+/* closing */
+.closing-quote{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:32px;
+  margin-top:8px;
+}
+.sources{margin-top:40px; font-size:12px; color:var(--text-faint); line-height:1.7;}
+.sources a{color:var(--text-faint);}
+
+/* footer nav */
+.foot-nav{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  margin-top:60px;
+  padding-top:22px;
+  border-top:1px solid var(--border);
+}
+.foot-nav button{
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:8px;
+  padding:12px 16px;
+  font-family:'Inter',sans-serif;
+  cursor:pointer;
+  font-size:13px;
+  max-width:47%;
+  text-align:left;
+  transition:border-color .15s ease;
+}
+.foot-nav button:hover{border-color:var(--accent);}
+.foot-nav button .fn-label{display:block; font-size:11px; color:var(--text-faint); margin-bottom:4px; font-family:'IBM Plex Mono',monospace;}
+.foot-nav button.next{text-align:right; margin-left:auto;}
+.foot-nav button:disabled{opacity:.3; cursor:default;}
+.foot-nav button:disabled:hover{border-color:var(--border);}
+
+/* progress */
+.progress-track{
+  height:2px; background:var(--border); border-radius:2px; margin-top:20px; overflow:hidden;
+}
+.progress-fill{height:100%; background:var(--accent); transition:width .25s ease;}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .mobile-bar{
+    display:flex;
+    position:sticky; top:0; z-index:5;
+    background:var(--bg-alt);
+    border-bottom:1px solid var(--border);
+    padding:14px 18px;
+    gap:8px;
+    overflow-x:auto;
+  }
+  .mobile-bar button{
+    flex:none;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    padding:7px 11px;
+    border-radius:20px;
+  }
+  .mobile-bar button.active{background:var(--accent-soft); color:var(--accent); border-color:transparent;}
+  main{padding:32px 22px 70px;}
+  .chapter-title{font-size:26px;}
+  .cover h1{font-size:30px;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">IME · GRUPO DE CONFIABILIDADE</div>
+      <h1>Alucinação em LLMs & Confiabilidade na Defesa</h1>
+      <p>Manual de referência da apresentação</p>
+    </div>
+    <nav class="chapters" id="sidebarNav"></nav>
+    <div class="sidebar-footer">Verificação e Validação de IA Militar<br>Agosto de 2026</div>
+  </aside>
+
+  <div class="mobile-bar" id="mobileNav"></div>
+
+  <main>
+
+    <!-- 00 — CAPA -->
+    <section class="chapter" data-title="Introdução" data-kicker="00">
+      <div class="cover">
+        <div class="mono">IME — Grupo de Pesquisa em Confiabilidade</div>
+        <h1>Alucinação em LLMs & Confiabilidade na Defesa</h1>
+        <p class="sub">Panorama da literatura peer-reviewed, avaliação empírica de modelos, paradigmas de verificação e escopo estratégico para IA militar no IME.</p>
+        <div class="meta">
+          <div><b>Data</b> — Agosto de 2026</div>
+          <div><b>Escopo</b> — Verificação e Validação de IA Militar</div>
+          <div><b>Formato</b> — Manual de leitura, 10 capítulos</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01 — CONCEITOS -->
+    <section class="chapter" data-title="Conceitos fundamentais" data-kicker="01">
+      <div class="kicker">01 — Definições</div>
+      <h2 class="chapter-title">O que é alucinação em LLMs?</h2>
+      <p class="chapter-sub">A base conceitual antes de qualquer discussão de risco ou mitigação: o que conta como alucinação, e por que "confiável" não é o mesmo que "digno de confiança".</p>
+
+      <div class="block">
+        <h3>Definição canônica</h3>
+        <div class="def">
+          <div class="label"><a class="ref" href="https://doi.org/10.1145/3571730" target="_blank" rel="noopener">Ji et al., ACM Computing Surveys, 2023</a></div>
+          <p>Conteúdo gerado que é sem sentido, infiel ou factualmente incorreto em relação ao contexto de origem ou à verdade do mundo real.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Taxonomia estrutural</h3>
+        <div class="def-grid">
+          <div class="def risk">
+            <div class="label">Intrínseca</div>
+            <p>A resposta contradiz diretamente o material de referência.</p>
+            <p>Ex.: inversão de coordenadas de radar do SISFRON.</p>
+          </div>
+          <div class="def risk">
+            <div class="label">Extrínseca</div>
+            <p>A resposta introduz alegações inverificáveis, ausentes nos dados.</p>
+            <p>Ex.: fabricar números de série de mísseis.</p>
+          </div>
+          <div class="def" style="grid-column:1 / -1;">
+            <div class="label">Factualidade</div>
+            <p>Geração confiante de fatos falsos sobre o mundo, por erro de memória paramétrica.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Confiabilidade vs. dignidade de confiança</h3>
+        <div class="def-grid">
+          <div class="def">
+            <div class="label">Reliable — ISO/IEC TS 5723 · NIST §3.1</div>
+            <p>Habilidade de um item operar conforme requerido, sem falhas, por um intervalo de tempo dado, sob condições determinadas.</p>
+            <p>Base técnica: acurácia, MTBF, generalização, PFD. Necessária, mas não suficiente.</p>
+          </div>
+          <div class="def">
+            <div class="label">Trustworthy — 7 pilares do NIST AI RMF</div>
+            <p>Sistema sócio-técnico multidimensional, que exige equilíbrio entre sete características centrais.</p>
+            <p>Axioma central: a confiança é tão forte quanto sua característica mais fraca.</p>
+          </div>
+        </div>
+        <div class="callout risk">
+          <span class="tag">Gap observado — SISFRON</span>
+          Modelos de fusão de sensores atingem alta acurácia no Cerrado aberto, mas falham sob dossel denso amazônico com chuva. Sem calibração de incerteza, alvos alucinados quebram a transparência e a segurança — invalidando o C2 militar.
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Robusto vs. confiável</h3>
+        <blockquote>"Um LLM pode ser robusto, mas não confiável, se não avisa quando está supondo."</blockquote>
+        <div class="def-grid" style="margin-top:16px;">
+          <div class="def">
+            <div class="label">Sem calibração</div>
+            <p>Um modelo responde 100 consultas táticas com 98 acertos. Nas 2 erradas, emite parecer com 100% de certeza — alta acurácia, calibração nula, risco silencioso.</p>
+          </div>
+          <div class="def good">
+            <div class="label">Com calibração</div>
+            <p>Em um pipeline de C2, o modelo recusa responder quando sua confiança cai abaixo de um limiar — convertendo alucinações silenciosas em falhas visíveis e auditáveis.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <span class="tag">Conclusão para o IME</span>
+          Um LLM militar com 99% de acurácia que nunca sinaliza incerteza é um passivo tático. Calibração — quantificar a própria ignorância — é a chave da confiabilidade operacional.
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 — LINHA DO TEMPO -->
+    <section class="chapter" data-title="Linha do tempo da literatura" data-kicker="02">
+      <div class="kicker">02 — Literatura</div>
+      <h2 class="chapter-title">Da alerta teórica à taxonomia madura</h2>
+      <p class="chapter-sub">Cinco artigos pré-LLM estabeleceram o vocabulário do problema; de 2021 a 2026 ele evoluiu para taxonomia canônica, benchmarks e frameworks de autocorreção.</p>
+
+      <div class="block">
+        <h3>Artigos fundacionais (era pré-LLM)</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Artigo</th><th>Veículo / ano</th><th>Contribuição</th></tr></thead>
+            <tbody>
+              <tr><td><a class="ref" href="https://aclanthology.org/D17-1239/" target="_blank" rel="noopener">Wiseman et al.</a></td><td class="num-cell">EMNLP 2017</td><td>Divergências estruturais e erros de seleção de conteúdo em geração neural baseada em dados.</td></tr>
+              <tr><td><a class="ref" href="https://arxiv.org/abs/1810.01170" target="_blank" rel="noopener">Dusek et al.</a></td><td class="num-cell">E2E NLG 2018</td><td>Avaliação comparativa de erros semânticos e atributos alucinados a partir de dados estruturados.</td></tr>
+              <tr><td><a class="ref" href="https://aclanthology.org/2020.acl-main.173/" target="_blank" rel="noopener">Maynez et al.</a></td><td class="num-cell">ACL 2020</td><td>Métricas formais de fidelidade e factualidade, antes de "alucinação" virar termo padrão.</td></tr>
+              <tr><td><a class="ref" href="https://doi.org/10.1145/3442188.3445922" target="_blank" rel="noopener">Bender et al.</a></td><td class="num-cell">FAccT 2021</td><td>"Stochastic Parrots" — alerta ético-técnico pioneiro sobre texto plausível sem ancoragem.</td></tr>
+              <tr><td><a class="ref" href="https://aclanthology.org/2020.acl-main.385/" target="_blank" rel="noopener">Abnar & Zuidema</a></td><td class="num-cell">ACL 2020</td><td>"Attention rollout/flow" — base metodológica para atribuição via mapas de atenção.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Linha do tempo — alertas às soluções</h3>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-year">2021</div><div class="tl-body"><strong><a class="ref" href="https://doi.org/10.1145/3442188.3445922" target="_blank" rel="noopener">Bender et al. (FAccT)</a></strong><span>Primeiro grande alerta ético e técnico sobre geração desancorada em modelos de grande escala.</span></div></div>
+          <div class="tl-item"><div class="tl-year">2023</div><div class="tl-body"><strong><a class="ref" href="https://doi.org/10.1145/3571730" target="_blank" rel="noopener">Ji et al. (ACM CSUR)</a> & <a class="ref" href="https://aclanthology.org/2023.emnlp-main.557/" target="_blank" rel="noopener">SelfCheckGPT</a></strong><span>Taxonomia canônica intrínseca/extrínseca e método seminal de amostragem black-box zero-resource.</span></div></div>
+          <div class="tl-item"><div class="tl-year">2024</div><div class="tl-body"><strong><a class="ref" href="https://arxiv.org/abs/2305.15852" target="_blank" rel="noopener">Mündler et al.</a> & <a class="ref" href="https://arxiv.org/abs/2401.00396" target="_blank" rel="noopener">RAGTruth (ACL)</a></strong><span>Detecção de auto-contradição lógica interna e primeiro corpus de referência para alucinações em RAG.</span></div></div>
+          <div class="tl-item"><div class="tl-year">2025</div><div class="tl-body"><strong><a class="ref" href="https://doi.org/10.1109/ACCESS.2025.3601206" target="_blank" rel="noopener">Woesle et al.</a> & <a class="ref" href="https://doi.org/10.1109/JSTSP.2025.3579203" target="_blank" rel="noopener">Malin et al.</a></strong><span>Revisão sistemática PRISMA (IEEE Access) e análise de métricas de fidelidade (IEEE JSTSP).</span></div></div>
+          <div class="tl-item"><div class="tl-year">2026</div><div class="tl-body"><strong><a class="ref" href="https://doi.org/10.1007/s10579-026-09938-4" target="_blank" rel="noopener">Naser (Springer)</a> & <a class="ref" href="https://arxiv.org/abs/2512.02527" target="_blank" rel="noopener">Pulkundwar et al. (arXiv)</a></strong><span>Síntese recente sobre definições, causas e mitigação, com novos datasets e autocorreção generativa.</span></div></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Revisões sistemáticas e taxonomias principais</h3>
+        <div class="def-grid">
+          <div class="def">
+            <div class="label"><a class="ref" href="https://doi.org/10.1145/3571730" target="_blank" rel="noopener">Ji et al., 2023</a> — ACM CSUR · 2.000+ citações</div>
+            <p>Pesquisa canônica que estabeleceu a taxonomia base intrínseca/extrínseca para tarefas de PLN.</p>
+          </div>
+          <div class="def">
+            <div class="label"><a class="ref" href="https://doi.org/10.1109/ACCESS.2025.3601206" target="_blank" rel="noopener">Woesle et al., 2025</a> — IEEE Access · Revisão PRISMA</div>
+            <p>Primeira revisão sistemática empregando metodologia formal PRISMA para categorizar detecção e mitigação.</p>
+          </div>
+          <div class="def" style="grid-column:1 / -1;">
+            <div class="label"><a class="ref" href="https://doi.org/10.1007/s10579-026-09938-4" target="_blank" rel="noopener">Naser, 2026</a> — Springer LRE · Estado da arte</div>
+            <p>Síntese recente consolidando datasets de teste, ferramentas de verificação black-box e autocorreção iterativa.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 — DETECÇÃO E MITIGAÇÃO -->
+    <section class="chapter" data-title="Detecção & mitigação" data-kicker="03">
+      <div class="kicker">03 — Métodos</div>
+      <h2 class="chapter-title">Detecção & mitigação</h2>
+      <p class="chapter-sub">Cinco métodos principais de detecção, e três famílias de estratégias de mitigação testadas na literatura recente.</p>
+
+      <div class="block">
+        <h3>Métodos de detecção</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Método</th><th>Veículo</th><th>Mecanismo central</th></tr></thead>
+            <tbody>
+              <tr><td><a class="ref" href="https://aclanthology.org/2023.emnlp-main.557/" target="_blank" rel="noopener">SelfCheckGPT (Manakul et al.)</a></td><td class="num-cell">EMNLP 2023</td><td>Amostragem estocástica black-box; consistência semântica cruzada sem fonte externa.</td></tr>
+              <tr><td><a class="ref" href="https://arxiv.org/abs/2305.15852" target="_blank" rel="noopener">Auto-Contradição (Mündler et al.)</a></td><td class="num-cell">ICLR 2024</td><td>Detecta contradições lógicas dentro de uma única resposta; supera checagens multi-prompt.</td></tr>
+              <tr><td><a class="ref" href="https://openreview.net/forum?id=LYx4w3CAgy" target="_blank" rel="noopener">LLM-Check (Sriramanan et al.)</a></td><td class="num-cell">NeurIPS 2024</td><td>Investiga o gap entre métodos de detecção e eficácia de mitigação em runtime.</td></tr>
+              <tr><td><a class="ref" href="https://doi.org/10.1145/3716846" target="_blank" rel="noopener">Detecção Multimodal (Chakraborty et al.)</a></td><td class="num-cell">ACM CSUR 2025</td><td>Estende a detecção a agentes decisores autônomos e modelos visão-linguagem.</td></tr>
+              <tr><td><a class="ref" href="https://doi.org/10.3390/math13203351" target="_blank" rel="noopener">TECP (Xu & Lu)</a></td><td class="num-cell">Mathematics 2025</td><td>Entropia a nível de token + predição conforme, com garantias formais de cobertura.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Estratégias de mitigação</h3>
+        <div class="def-grid">
+          <div class="def">
+            <div class="label">1. Decodificação controlada</div>
+            <p><strong style="color:var(--text)"><a class="ref" href="https://arxiv.org/abs/2309.03883" target="_blank" rel="noopener">DoLa</a> & <a class="ref" href="https://arxiv.org/abs/2305.14739" target="_blank" rel="noopener">CAD</a></strong> — contraste entre camadas iniciais/finais, ou com/sem contexto. +12–17% de acurácia factual, sem retreinamento.</p>
+          </div>
+          <div class="def">
+            <div class="label">2. Ciclos de auto-refinamento</div>
+            <p><strong style="color:var(--text)"><a class="ref" href="https://arxiv.org/abs/2303.17651" target="_blank" rel="noopener">Self-Refine</a> & <a class="ref" href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener">Reflexion</a></strong> — o LLM atua como gerador e crítico, via reforço verbal e memória de execução.</p>
+          </div>
+          <div class="def" style="grid-column:1 / -1;">
+            <div class="label">3. Verificação em múltiplas etapas</div>
+            <p><strong style="color:var(--text)"><a class="ref" href="https://arxiv.org/abs/2309.11495" target="_blank" rel="noopener">CoVe</a> & <a class="ref" href="https://arxiv.org/abs/2210.08726" target="_blank" rel="noopener">RARR</a></strong> — cadeia de verificação e revisão aumentada por recuperação, elaborando perguntas de checagem contra fontes externas antes da resposta final.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 — BENCHMARKS -->
+    <section class="chapter" data-title="Benchmarks & métricas" data-kicker="04">
+      <div class="kicker">04 — Avaliação empírica</div>
+      <h2 class="chapter-title">Benchmarks & métricas</h2>
+      <p class="chapter-sub">Os principais frameworks de avaliação, e onde nove modelos de ponta se posicionam no Índice de Alucinação Vectara/Hugging Face.</p>
+
+      <div class="block">
+        <h3>Benchmarks & frameworks de avaliação</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Benchmark</th><th>Veículo</th><th>Foco</th></tr></thead>
+            <tbody>
+              <tr><td><a class="ref" href="https://arxiv.org/abs/2401.00396" target="_blank" rel="noopener">RAGTruth (Niu et al.)</a></td><td class="num-cell">ACL 2024</td><td>Primeiro corpus de grande escala voltado a avaliar alucinações em RAG.</td></tr>
+              <tr><td><a class="ref" href="https://aclanthology.org/2023.emnlp-main.397/" target="_blank" rel="noopener">HaluEval (Li et al.)</a></td><td class="num-cell">EMNLP 2023</td><td>QA, sumarização e diálogo contra referências, em larga escala.</td></tr>
+              <tr><td><a class="ref" href="https://aclanthology.org/2025.acl-long.71/" target="_blank" rel="noopener">HaLoGen (Ravichander et al.)</a></td><td class="num-cell">ACL 2025</td><td>Taxonomia refinada, com decomposição atômica via FactScore.</td></tr>
+              <tr><td><a class="ref" href="https://doi.org/10.1109/JSTSP.2025.3579203" target="_blank" rel="noopener">Revisão de Fidelidade (Malin et al.)</a></td><td class="num-cell">IEEE JSTSP 2025</td><td>Pesquisa sistemática de métricas de alinhamento factual.</td></tr>
+              <tr><td><a class="ref" href="https://doi.org/10.32604/cmc.2026.081260" target="_blank" rel="noopener">HalluBench (Şenyayla & Onan)</a></td><td class="num-cell">CMC 2026</td><td>Confiabilidade comparativa sob prompts adversariais e domínios específicos.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Índice de alucinação dos modelos (<a class="ref" href="https://huggingface.co/spaces/vectara/leaderboard" target="_blank" rel="noopener">Vectara / HF</a>)</h3>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Modelo</th><th>Arquitetura</th><th>Taxa de alucinação</th><th>Consistência factual</th></tr></thead>
+            <tbody>
+              <tr><td>Phi-4 (Microsoft)</td><td>SLM denso, 14B</td><td class="num-cell">3,7%</td><td class="num-cell">96,3%</td></tr>
+              <tr><td>Llama-3.3-70B-Instruct (Meta)</td><td>LLM denso, 70B</td><td class="num-cell">4,1%</td><td class="num-cell">95,9%</td></tr>
+              <tr><td>Mistral Large 2411</td><td>LLM denso, 123B</td><td class="num-cell">4,5%</td><td class="num-cell">95,5%</td></tr>
+              <tr><td>Qwen 2.5-72B-Instruct (Alibaba)</td><td>LLM denso, 72B</td><td class="num-cell">5,4%</td><td class="num-cell">94,6%</td></tr>
+              <tr><td>DeepSeek-V3</td><td>MoE, 671B (37B ativos)</td><td class="num-cell">6,1%</td><td class="num-cell">93,9%</td></tr>
+              <tr><td>Gemini 2.5 Pro (Google)</td><td>MoE multimodal</td><td class="num-cell">7,0%</td><td class="num-cell">93,0%</td></tr>
+              <tr><td>GPT-4o, 2024-08-06 (OpenAI)</td><td>MoE multimodal</td><td class="num-cell">9,6%</td><td class="num-cell">90,4%</td></tr>
+              <tr><td>Claude 3.5 Sonnet (Anthropic)</td><td>Denso / MoE</td><td class="num-cell">9,8%</td><td class="num-cell">90,2%</td></tr>
+              <tr><td>DeepSeek-R1</td><td>Raciocínio MoE, 671B (37B)</td><td class="num-cell">11,3%</td><td class="num-cell">88,7%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <span class="tag">Conclusão para a Defesa</span>
+          Escala e raciocínio multi-etapa não eliminam alucinações. Modelos compactos bem regularizados (ex.: Phi-4) superam modelos de raciocínio profundo (ex.: DeepSeek-R1) em RAG fechado, devido ao menor espaço de busca estocástica desancorada.
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 — PARADOXO DA DEFESA -->
+    <section class="chapter" data-title="O paradoxo da Defesa" data-kicker="05">
+      <div class="kicker">05 — Contexto estratégico</div>
+      <h2 class="chapter-title">O paradoxo da Defesa & a realidade brasileira</h2>
+      <p class="chapter-sub">O investimento em autonomia militar acelera mais rápido do que a capacidade de verificação — e a fragilidade operacional aparece justamente nas condições de campo.</p>
+
+      <div class="stat-row">
+        <div class="stat"><div class="n">US$ 13,4 bi</div><div class="l">Orçamento DoD (EUA) para autonomia, FY26</div></div>
+        <div class="stat"><div class="n">US$ 53,6 bi</div><div class="l">Orçamento solicitado, FY27</div></div>
+        <div class="stat"><div class="n">US$ 90,7 bi</div><div class="l">Teto de contratos de IA militar</div></div>
+      </div>
+      <p style="font-size:12px; color:var(--text-faint); margin-top:10px;">DefenseScoop (2025) · Orçamento DoD FY27 · Brookings (2026)</p>
+
+      <div class="block">
+        <div class="def risk">
+          <div class="label">Fragilidade operacional real — IEEE Spectrum (2025)</div>
+          <p>Testes em campo mostram quedas drásticas de acurácia sob clima severo, interferência eletrônica ou sensores degradados.</p>
+        </div>
+        <div class="def risk">
+          <div class="label">Riscos no direcionamento de fogo — +972 Mag / ONU OHCHR (2024)</div>
+          <p>Ferramentas de IA para alvos (Lavender/Gospel) reduziram a revisão humana a ~20 segundos, com taxas de erro de ~10%.</p>
+        </div>
+        <div class="def risk">
+          <div class="label">Alertas do CICV</div>
+          <p>Armas autônomas impõem sérios riscos humanitários pela perda de discernimento humano e vulnerabilidade à manipulação adversarial.</p>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:30px;">
+        <span class="tag">Nicho soberano do Brasil & IME</span>
+        Para os programas estratégicos (ASTROS 2020, SISFRON, Link-BR2), priorizar Verificação e Validação rigorosa e certificação de confiabilidade — em vez de treinar LLMs gigantes.
+      </div>
+    </section>
+
+    <!-- 06 — PROPOSTA DO IME -->
+    <section class="chapter" data-title="Proposta do IME" data-kicker="06">
+      <div class="kicker">06 — Posicionamento</div>
+      <h2 class="chapter-title">Escopo e fronteiras de pesquisa</h2>
+      <p class="chapter-sub">O Grupo de Confiabilidade do IME escolhe deliberadamente o que persegue e o que evita, para eliminar ambiguidade interna.</p>
+
+      <div class="split">
+        <div class="split-col pursue">
+          <h4>Seguimos — Engenharia de confiabilidade técnica</h4>
+          <div class="item-line"><span class="dot"></span><div><strong>Padrões quantificáveis (ISO/IEC TS 5723)</strong> — limites matemáticos formais para MTBF, PFD e taxas de erro sob desvio de distribuição.</div></div>
+          <div class="item-line"><span class="dot"></span><div><strong>Verificação em runtime & guardrails</strong> — módulos watchdog determinísticos, monitorando ativação latente antes da atuação física.</div></div>
+          <div class="item-line"><span class="dot"></span><div><strong>Incerteza calibrada & abstenção segura</strong> — predição conforme e entropia semântica, para recusa segura ao romper limites de confiança.</div></div>
+        </div>
+        <div class="split-col avoid">
+          <h4>Evitamos — Trustworthiness qualitativa</h4>
+          <div class="item-line"><span class="dot"></span><div><strong>Checklists éticos sem prova</strong> — manifestos discursivos e diretrizes abstratas sem validação formal.</div></div>
+          <div class="item-line"><span class="dot"></span><div><strong>Acurácia nominal sem calibração</strong> — métricas de "98%" que mascaram falhas emitidas com 100% de certeza.</div></div>
+          <div class="item-line"><span class="dot"></span><div><strong>Auto-reflexão verbal não verificada</strong> — auto-crítica via prompt, sem checagem lógica externa determinística.</div></div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:30px;">
+        <span class="tag">Diretriz do grupo</span>
+        Para eliminar qualquer ambiguidade interna, o Grupo de Confiabilidade do IME foca estritamente em engenharia de confiabilidade (V&V) rigorosa, determinística e certificável para IA de Defesa — e não em governança qualitativa.
+      </div>
+    </section>
+
+    <!-- 07 — AGENDA DE PESQUISA -->
+    <section class="chapter" data-title="Agenda de pesquisa" data-kicker="07">
+      <div class="kicker">07 — Questões de pesquisa</div>
+      <h2 class="chapter-title">Sete questões abertas (QP1–QP7)</h2>
+      <p class="chapter-sub">O roteiro de pesquisa que orienta os próximos passos do grupo, formulado como questões diretamente verificáveis.</p>
+
+      <div class="qgrid">
+        <div class="qcard"><span class="qtag">QP1 · MTBF certificável</span><p>Como definir e mensurar matematicamente o tempo médio entre falhas de um LLM sob desvios de distribuição táticos (ruído de radar no SISFRON, bloqueio eletrônico, spoofing)?</p></div>
+        <div class="qcard"><span class="qtag">QP2 · Módulos watchdog</span><p>É viável construir arquiteturas "watchdog" em tempo real, monitorando ativações internas para disparar fallbacks seguros antes de atingir atuadores (Link-BR2, ASTROS MTC-300)?</p></div>
+        <div class="qcard"><span class="qtag">QP3 · MIL-STD para GenAI</span><p>Qual é o equivalente da norma MIL-STD-810 para testar limites ambientais, eletromagnéticos e adversariais de modelos generativos no teatro operacional brasileiro?</p></div>
+        <div class="qcard"><span class="qtag">QP4 · Orçamento de confiabilidade</span><p>Como alocar formalmente a probabilidade de falha sob demanda entre o LLM, o operador humano e a camada de verificação formal, em uma cadeia de C2 integrada?</p></div>
+        <div class="qcard"><span class="qtag">QP5 · Transferência de assinaturas</span><p>Assinaturas de alucinação aprendidas em textos públicos se transferem para a doutrina militar classificada, ou detectores sob medida são mandatórios?</p></div>
+        <div class="qcard"><span class="qtag">QP6 · Abstenção explicável</span><p>Quando um LLM se abstém por baixa confiança, como certificar que a recusa é correta e não causa paralisia decisória em combate?</p></div>
+        <div class="qcard" style="grid-column:1 / -1;"><span class="qtag">QP7 · V&V na cadeia de suprimentos</span><p>Diante da dependência de hardware e pesos pré-treinados estrangeiros, como verificar matematicamente atualizações de modelos em nós computacionais soberanos?</p></div>
+      </div>
+    </section>
+
+    <!-- 08 — CONCLUSÕES -->
+    <section class="chapter" data-title="Conclusões" data-kicker="08">
+      <div class="kicker">08 — Síntese</div>
+      <h2 class="chapter-title">Principais conclusões</h2>
+      <p class="chapter-sub">O que este panorama da literatura sustenta, e por onde continuar lendo.</p>
+
+      <div class="callout risk">
+        <span class="tag">O paradoxo da Defesa</span>
+        Grandes potências estão armando sistemas mais rápido do que conseguem verificar.
+      </div>
+      <div class="callout" style="margin-top:20px;">
+        <span class="tag">Direcionamento estratégico do IME</span>
+        O nicho de alto impacto do Brasil e do IME está em Verificação e Validação, monitoramento formal em tempo de execução e frameworks de certificação de confiabilidade para sistemas decisórios militares.
+      </div>
+
+      <div class="block">
+        <h3>Roteiro de leituras recomendadas</h3>
+        <div class="def-grid">
+          <div class="def"><div class="label">Taxonomia canônica</div><p><a class="ref" href="https://doi.org/10.1145/3571730" target="_blank" rel="noopener">Ji et al., ACM CSUR, 2023</a>.</p></div>
+          <div class="def"><div class="label">Detecção black-box</div><p><a class="ref" href="https://aclanthology.org/2023.emnlp-main.557/" target="_blank" rel="noopener">SelfCheckGPT — Manakul et al., EMNLP 2023</a>.</p></div>
+          <div class="def"><div class="label">Metodologia sistemática</div><p><a class="ref" href="https://doi.org/10.1109/ACCESS.2025.3601206" target="_blank" rel="noopener">Woesle et al., IEEE Access, 2025</a>.</p></div>
+          <div class="def"><div class="label">Painel empírico</div><p><a class="ref" href="https://huggingface.co/spaces/vectara/leaderboard" target="_blank" rel="noopener">Hugging Face Vectara Hallucination Leaderboard</a>.</p></div>
+          <div class="def" style="grid-column:1 / -1;"><div class="label">Revisão atualizada</div><p><a class="ref" href="https://doi.org/10.1007/s10579-026-09938-4" target="_blank" rel="noopener">Naser, Springer, 2026</a>.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 — FECHAMENTO -->
+    <section class="chapter" data-title="Perguntas & discussão" data-kicker="09">
+      <div class="kicker">09 — Encerramento</div>
+      <h2 class="chapter-title">Perguntas & discussão</h2>
+
+      <div class="closing-quote">
+        <blockquote>Integrando a engenharia clássica de confiabilidade de sistemas com a verificação formal de IA generativa para a Defesa Nacional.</blockquote>
+        <p style="margin-top:20px; color:var(--text-dim); font-size:13.5px;">Grupo de Pesquisa em Confiabilidade — IME Brasil<br>V&V para IA Militar</p>
+      </div>
+
+      <div class="sources">
+        Fontes de imagem: SISFRON — edrmagazine.eu · ASTROS 2020 — armyrecognition.com
+      </div>
+    </section>
+
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="foot-nav">
+      <button id="prevBtn"><span class="fn-label">← Anterior</span><span id="prevLabel"></span></button>
+      <button id="nextBtn" class="next"><span class="fn-label">Próximo →</span><span id="nextLabel"></span></button>
+    </div>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  const chapters = Array.from(document.querySelectorAll('.chapter'));
+  const sidebarNav = document.getElementById('sidebarNav');
+  const mobileNav = document.getElementById('mobileNav');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const prevLabel = document.getElementById('prevLabel');
+  const nextLabel = document.getElementById('nextLabel');
+  const progressFill = document.getElementById('progressFill');
+  let current = 0;
+
+  chapters.forEach((ch, i) => {
+    const num = ch.dataset.kicker;
+    const title = ch.dataset.title;
+
+    const sBtn = document.createElement('button');
+    sBtn.className = 'chapter-btn';
+    sBtn.innerHTML = '<span class="num">' + num + '</span><span>' + title + '</span>';
+    sBtn.addEventListener('click', () => goTo(i));
+    sidebarNav.appendChild(sBtn);
+
+    const mBtn = document.createElement('button');
+    mBtn.textContent = num;
+    mBtn.title = title;
+    mBtn.addEventListener('click', () => goTo(i));
+    mobileNav.appendChild(mBtn);
+  });
+
+  const sidebarBtns = Array.from(sidebarNav.children);
+  const mobileBtns = Array.from(mobileNav.children);
+
+  function goTo(i){
+    if(i < 0 || i >= chapters.length) return;
+    chapters[current].classList.remove('active');
+    sidebarBtns[current].classList.remove('active');
+    mobileBtns[current].classList.remove('active');
+
+    current = i;
+    chapters[current].classList.add('active');
+    sidebarBtns[current].classList.add('active');
+    mobileBtns[current].classList.add('active');
+    mobileBtns[current].scrollIntoView({inline:'center', block:'nearest'});
+
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === chapters.length - 1;
+    prevLabel.textContent = current > 0 ? chapters[current-1].dataset.title : '';
+    nextLabel.textContent = current < chapters.length-1 ? chapters[current+1].dataset.title : '';
+    progressFill.style.width = ((current+1)/chapters.length*100) + '%';
+
+    window.scrollTo({top:0, behavior:'instant'});
+    history.replaceState(null, '', '#c' + current);
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current-1));
+  nextBtn.addEventListener('click', () => goTo(current+1));
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowRight') goTo(current+1);
+    if(e.key === 'ArrowLeft') goTo(current-1);
+  });
+
+  const hash = location.hash.match(/^#c(\d+)$/);
+  goTo(hash ? parseInt(hash[1], 10) : 0);
+})();
+</script>
+
+</body>
+</html>
