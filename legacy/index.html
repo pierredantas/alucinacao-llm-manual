@@ -22,6 +22,14 @@
   --risk-soft:rgba(179,74,52,.07);
   --good:#31815d;
   --good-soft:rgba(49,129,93,.08);
+  --kind-def:#3a6ea5;
+  --kind-def-soft:rgba(58,110,165,.08);
+  --kind-tax:#7a5ea8;
+  --kind-tax-soft:rgba(122,94,168,.08);
+  --kind-cmp:#b5720f;
+  --kind-cmp-soft:rgba(181,114,15,.08);
+  --kind-ex:#3a8a6e;
+  --kind-ex-soft:rgba(58,138,110,.08);
 }
 
 *{box-sizing:border-box;}
@@ -167,6 +175,36 @@ main{
   font-weight:500;
   margin-bottom:14px;
 }
+.block.tagged{padding-left:16px; border-left:3px solid var(--border);}
+
+/* content-kind tag: gives each block a distinct visual signature */
+.kind-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  font-weight:500;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding:3px 9px;
+  border-radius:20px;
+  margin-bottom:10px;
+}
+.kind-tag .n{
+  font-size:10px;
+  opacity:.75;
+  text-transform:none;
+  letter-spacing:0;
+}
+.block.k-def{border-left-color:var(--kind-def);}
+.block.k-tax{border-left-color:var(--kind-tax);}
+.block.k-cmp{border-left-color:var(--kind-cmp);}
+.block.k-ex{border-left-color:var(--kind-ex);}
+.kind-tag.k-def{background:var(--kind-def-soft); color:var(--kind-def);}
+.kind-tag.k-tax{background:var(--kind-tax-soft); color:var(--kind-tax);}
+.kind-tag.k-cmp{background:var(--kind-cmp-soft); color:var(--kind-cmp);}
+.kind-tag.k-ex{background:var(--kind-ex-soft); color:var(--kind-ex);}
 
 /* definition card */
 .def{
@@ -448,7 +486,8 @@ blockquote{
       <h2 class="chapter-title">O que é alucinação em LLMs?</h2>
       <p class="chapter-sub">A base conceitual antes de qualquer discussão de risco ou mitigação: o que conta como alucinação, e por que "confiável" não é o mesmo que "digno de confiança".</p>
 
-      <div class="block">
+      <div class="block tagged k-def">
+        <span class="kind-tag k-def">Definição</span>
         <h3>Definição canônica</h3>
         <div class="def">
           <div class="label"><a class="ref" href="https://doi.org/10.1145/3571730" target="_blank" rel="noopener">Ji et al., ACM Computing Surveys, 2023</a></div>
@@ -456,7 +495,8 @@ blockquote{
         </div>
       </div>
 
-      <div class="block">
+      <div class="block tagged k-tax">
+        <span class="kind-tag k-tax">Taxonomia <span class="n">· 3 categorias</span></span>
         <h3>Taxonomia estrutural</h3>
         <div class="def-grid">
           <div class="def risk">
@@ -476,7 +516,8 @@ blockquote{
         </div>
       </div>
 
-      <div class="block">
+      <div class="block tagged k-cmp">
+        <span class="kind-tag k-cmp">Comparação <span class="n">· lado a lado</span></span>
         <h3>Confiabilidade vs. dignidade de confiança</h3>
         <div class="def-grid">
           <div class="def">
@@ -496,7 +537,8 @@ blockquote{
         </div>
       </div>
 
-      <div class="block">
+      <div class="block tagged k-ex">
+        <span class="kind-tag k-ex">Exemplo aplicado</span>
         <h3>Robusto vs. confiável</h3>
         <blockquote>"Um LLM pode ser robusto, mas não confiável, se não avisa quando está supondo."</blockquote>
         <div class="def-grid" style="margin-top:16px;">

@@ -1,0 +1,50 @@
+site_name: Alucinação em LLMs & Confiabilidade na Defesa
+site_description: Manual de referência vivo e bibliografia verificada sobre alucinação em modelos de linguagem, com foco em verificação e validação de IA de Defesa.
+site_url: https://pierredantas.github.io/alucinacao-llm-manual/
+repo_url: https://github.com/pierredantas/alucinacao-llm-manual
+repo_name: alucinacao-llm-manual
+copyright: Conteúdo sob CC BY 4.0. Ver LICENSE.
+docs_dir: docs
+site_dir: _site
+strict: true
+edit_uri: ""
+
+nav:
+  - Início: index.md
+  - "01 · Conceitos fundamentais": 01-conceitos.md
+  - "02 · Linha do tempo da literatura": 02-linha-do-tempo.md
+  - "03 · Detecção & mitigação": 03-deteccao-mitigacao.md
+  - "04 · Benchmarks & métricas": 04-benchmarks.md
+  - "05 · Proposta do IME": 05-proposta-ime.md
+  - "06 · Agenda de pesquisa": 06-agenda-pesquisa.md
+  - "07 · Conclusões": 07-conclusoes.md
+  - "08 · Perguntas & discussão": 08-encerramento.md
+  - Metodologia: methodology.md
+  - Licença: license.md
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - content.code.copy
+    - content.tabs.link
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - toc.follow
+  palette:
+    scheme: default
+    primary: teal
+    accent: teal
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - footnotes
+  - md_in_html
+  - tables
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true

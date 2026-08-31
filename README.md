@@ -4,21 +4,30 @@ Documento vivo sobre alucinação em modelos de linguagem e confiabilidade em co
 
 **Site:** https://pierredantas.github.io/alucinacao-llm-manual/
 
-Abra `index.html` no navegador, ou acesse diretamente pelo link acima (GitHub Pages).
+Publicado com [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/), build automático via GitHub Actions a cada push em `docs/`.
 
 ## Conteúdo
 
-| Arquivo | Conteúdo |
+| Local | Conteúdo |
 |---|---|
-| `index.html` | Manual de leitura, 10 capítulos |
-| `references.bib` | Bibliografia verificada (BibTeX), 178 entradas |
-| `METHODOLOGY.md` | Como as fontes foram buscadas e verificadas, e o que ainda está pendente |
-| `CITATION.cff` | Como citar este recurso |
-| `LICENSE` | CC BY 4.0 |
+| `docs/index.md` | Página inicial e sumário |
+| `docs/01-conceitos.md` … `docs/08-encerramento.md` | Manual de leitura, 9 capítulos |
+| `docs/references.bib` | Bibliografia verificada (BibTeX), 178 entradas |
+| `docs/methodology.md` | Como as fontes foram buscadas e verificadas, e o que ainda está pendente |
+| `docs/citation.cff` | Como citar este recurso |
+| `docs/license.md` | CC BY 4.0 |
+| `legacy/index.html` | Versão anterior, HTML único autocontido (arquivada) |
+
+## Desenvolvimento local
+
+```bash
+pip install -r site_src/requirements.txt
+mkdocs serve
+```
 
 ## Como citar
 
-Veja `CITATION.cff`, ou use o botão "Cite this repository" do GitHub.
+Veja `CITATION.cff` na raiz, ou use o botão "Cite this repository" do GitHub.
 
 ## Status
 
