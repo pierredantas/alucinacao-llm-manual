@@ -16,6 +16,29 @@ Cinco artigos pré-LLM estabeleceram o vocabulário do problema; de 2021 a 2026 
 
 ## Linha do tempo — alertas às soluções
 
+```mermaid
+timeline
+    title Da alerta ético à autocorreção generativa
+    2021 : Bender et al. (FAccT)
+         : alerta ético e técnico sobre geração desancorada
+    2023 : Ji et al. (ACM CSUR)
+         : taxonomia canônica intrínseca/extrínseca
+         : SelfCheckGPT
+         : amostragem black-box zero-resource
+    2024 : Mündler et al.
+         : detecção de auto-contradição lógica interna
+         : RAGTruth (ACL)
+         : primeiro corpus de referência para RAG
+    2025 : Woesle et al. (IEEE Access)
+         : revisão sistemática PRISMA
+         : Malin et al. (IEEE JSTSP)
+         : métricas de fidelidade
+    2026 : Naser (Springer)
+         : síntese de definições, causas e mitigação
+         : Pulkundwar et al. (arXiv)
+         : novos datasets e autocorreção generativa
+```
+
 **2021 — [Bender et al. (FAccT)](https://doi.org/10.1145/3442188.3445922)**
 Primeiro grande alerta ético e técnico sobre geração desancorada em modelos de grande escala.
 
@@ -40,6 +63,13 @@ A literatura sobre alucinação em LLMs passa por uma virada estrutural entre 20
 **2024–2025 — a virada causal.** Os trabalhos que fundamentam [Por que os LLMs alucinam](01-conceitos.md#por-que-os-llms-alucinam) aparecem nesta janela: [Kalai & Vempala (STOC 2024)](https://doi.org/10.1145/3618260.3649777) provam uma cota formal de calibração, e [Xu, Jain & Kankanhalli (2024)](https://doi.org/10.48550/ARXIV.2401.11817) formalizam um argumento de inevitabilidade via teoria da computabilidade. A pergunta muda de "quais tipos de alucinação existem" para "por que a alucinação é, em algum grau, matematicamente inevitável".
 
 **2026 — definição estrutural.** [Yi (IEEE Access)](https://doi.org/10.1109/ACCESS.2026.3707249) rejeita explicitamente o enquadramento de "deficiência de conhecimento" ou "falha de alinhamento" das taxonomias de 2023, e propõe uma definição estrutural formal de alucinação como falha de fechamento em um espaço de coordenadas semânticas, com um "FIP Gate" em tempo de inferência como mitigação proposta.
+
+```mermaid
+flowchart LR
+    A["2023 — taxonomia empírica\nJi et al.; Zhang et al.\n'o que existe'"] --> B["2024–2025 — virada causal\nKalai & Vempala; Xu, Jain & Kankanhalli\n'por que é inevitável'"]
+    B --> C["2026 — definição estrutural\nYi\n'o que é matematicamente\npossível evitar'"]
+    C --> D["V&V militar:\nnenhum processo prova a ausência\nde um fenômeno formalmente inevitável"]
+```
 
 !!! tip "Por que essa virada importa para a Defesa"
     Uma taxonomia diz o que observar. Uma definição formal diz o que é matematicamente possível evitar, e o que não é. Para certificação de IA militar, a segunda pergunta é a que importa: nenhum processo de V&V consegue provar a ausência de um fenômeno que a literatura já demonstrou ser, em parte, formalmente inevitável.
