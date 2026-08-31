@@ -25,6 +25,7 @@ Este é um documento vivo, atualizado continuamente. Os 9 capítulos cobrem, em 
 
 ## Recursos para pesquisa
 
+- **[Glossário](glossario.md)** — termos e siglas técnicas do manual.
 - **[Bibliografia verificada (BibTeX)](references.bib)** — 178 entradas.
 - **[Metodologia](methodology.md)** — como as fontes foram buscadas e verificadas, e o que ainda está pendente.
 - **[Como citar](citation.cff)**
