@@ -28,3 +28,12 @@ Os principais frameworks de avaliação, e onde nove modelos de ponta se posicio
 
 !!! tip "Conclusão para a Defesa"
     Escala e raciocínio multi-etapa não eliminam alucinações. Modelos compactos bem regularizados (ex.: Phi-4) superam modelos de raciocínio profundo (ex.: DeepSeek-R1) em RAG fechado, devido ao menor espaço de busca estocástica desancorada.
+
+## O ranking não é permanente, e não generaliza para domínio militar
+
+A própria equipe da Vectara documenta as limitações do índice acima. [Tamber et al. (EMNLP 2025, Industry Track)](https://doi.org/10.18653/v1/2025.emnlp-industry.54) descrevem o leaderboard original, baseado no detector HHEM, ativo desde 2023, e introduzem uma metodologia revisada, o FaithJudge, motivada por limitações observadas no método de detecção original. O ranking de nove modelos na tabela acima é uma fotografia de um método específico em um momento específico, não uma propriedade estável dos modelos.
+
+O índice também mede um cenário genérico: consistência factual em RAG de propósito geral. Nenhuma das cinco linhas da tabela de benchmarks acima usa prompts adversariais de domínio militar. [HalluBench (Şenyayla & Onan)](https://doi.org/10.32604/cmc.2026.081260) é a exceção parcial: mede confiabilidade comparativa sob prompts adversariais e domínios específicos, mas não domínio militar per se.
+
+!!! danger "Um número de leaderboard não é uma certificação"
+    O gap SISFRON descrito no [capítulo 01](01-conceitos.md#confiabilidade-vs-dignidade-de-confianca), alta acurácia no Cerrado aberto, falha sob dossel amazônico, é exatamente o tipo de queda de desempenho fora de distribuição que um índice de propósito geral não captura. Uma taxa de alucinação de 3,7% em benchmark aberto não informa a taxa de alucinação do mesmo modelo sob o domínio, o vocabulário e as condições adversariais de um sistema de Defesa específico. Essa medição não existe hoje na literatura pública.
