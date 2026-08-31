@@ -1,8 +1,8 @@
 # Alucinação em LLMs & Confiabilidade na Defesa
 
-IME — Grupo de Pesquisa em Confiabilidade
+Grupo de Pesquisa em Confiabilidade
 
-Panorama da literatura peer-reviewed, avaliação empírica de modelos, paradigmas de verificação e escopo estratégico para IA militar no IME.
+Panorama da literatura peer-reviewed, avaliação empírica de modelos, paradigmas de verificação e escopo estratégico para IA militar.
 
 | | |
 |---|---|
@@ -18,7 +18,7 @@ Este é um documento vivo, atualizado continuamente. Os 9 capítulos cobrem, em 
 2. **[Linha do tempo da literatura](02-linha-do-tempo.md)** — da alerta teórica (2021) à taxonomia madura (2026).
 3. **[Detecção & mitigação](03-deteccao-mitigacao.md)** — métodos de detecção e famílias de estratégias de mitigação.
 4. **[Benchmarks & métricas](04-benchmarks.md)** — frameworks de avaliação e o índice de alucinação de nove modelos de ponta.
-5. **[Duas propostas de pesquisa](05-proposta-ime.md)** — AI Robusta (reliable) e AI Confiável (trustworthy) como programas distintos e complementares.
+5. **[Duas propostas de pesquisa](05-propostas-pesquisa.md)** — AI Robusta (reliable) e AI Confiável (trustworthy) como programas distintos e complementares.
 6. **[Agenda de pesquisa](06-agenda-pesquisa.md)** — sete questões abertas (QP1–QP7).
 7. **[Conclusões](07-conclusoes.md)** — síntese e roteiro de leituras recomendadas.
 8. **[Perguntas & discussão](08-encerramento.md)** — encerramento.
@@ -33,4 +33,4 @@ Este é um documento vivo, atualizado continuamente. Os 9 capítulos cobrem, em 
 
 ---
 
-Grupo de Pesquisa em Confiabilidade — IME Brasil · V&V para IA Militar
+Grupo de Pesquisa em Confiabilidade · V&V para IA Militar

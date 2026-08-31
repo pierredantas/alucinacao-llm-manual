@@ -68,5 +68,5 @@ O vocabulário de "calibração" e "entropia semântica", usado nos capítulos [
 |---|---|
 | Um modelo responde 100 consultas táticas com 98 acertos. Nas 2 erradas, emite parecer com 100% de certeza — alta acurácia, calibração nula, risco silencioso. | Em um pipeline de C2, o modelo recusa responder quando sua confiança cai abaixo de um limiar, convertendo alucinações silenciosas em falhas visíveis e auditáveis. |
 
-!!! tip "Conclusão para o IME"
+!!! tip "Conclusão"
     Um LLM militar com 99% de acurácia que nunca sinaliza incerteza é um passivo tático. Calibração, quantificar a própria ignorância, é a chave da confiabilidade operacional.
